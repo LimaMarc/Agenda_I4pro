@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Agenda_I4pro.Models.ModelViewModel.ContatoViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Lista de Contato</h2>
+
+<p>
+    @Html.ActionLink("Novo Contato", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Identificador
+        </th>
+        <th>
+            Nome
+        </th>
+        <th>
+            Sobrenome
+        </th>
+        <th> Ações </th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.ID)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.NomeContato)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.SobreNome)
+    </td>
+    <td>
+        @Html.ActionLink("Editar Contato", "Create", new { id = item.ID }) |
+        @Html.ActionLink("Detalhe do Contato", "Details", new { id = item.ID }) |
+        @Html.ActionLink("Excluir Contato", "Delete", new { id = item.ID })
+    </td>
+</tr>
+}
+
+</table>

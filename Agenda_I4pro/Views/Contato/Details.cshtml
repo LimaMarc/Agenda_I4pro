@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Agenda_I4pro.Models.ModelViewModel.ContatoDetalheViewModel>
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Detalhe Contato</h2>
+
+<p>
+  @Model.First().CD_CONTO_NOME @Model.First().CD_CONTO_SOBRENOME
+</p>
+<table class="table table-striped">
+    <tr>
+        <th>
+            Telefone
+        </th>
+
+       
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CD_TEL)
+            </td>
+
+        </tr>
+       
+    }
+
+
+</table>
+
+<table class="table table-striped" >
+    <tr>
+        <th>
+            Email
+        </th>    
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CD_EMAIL)
+            </td>          
+
+        </tr>
+    }
+
+</table>
+
+<p>
+    @Html.ActionLink("Voltar", "Index")
+</p>

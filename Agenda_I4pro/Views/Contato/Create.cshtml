@@ -1,0 +1,236 @@
+﻿
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+       
+        var txtnome;
+        var txtsobrenome;
+        $("#btnEmail").click(function () {
+
+            EmailAppend();
+        });
+
+        $("#btnTelefone").click(function () {
+            TelefoneAppend()
+        });
+
+
+
+        $("#CadastrarDados").click(function () {
+
+            
+            PersistirDados();
+            txtnome = $("#txtNome").val();
+            txtsobrenome = $("#txtSobrenome").val();
+           
+            
+        });
+
+        $("#btnEmail").attr('title', 'Adicionar E-mail na lista');
+        $("#btnTelefone").attr('title', 'Adicionar Telefone na lista');
+
+    });
+
+
+
+
+
+
+
+
+
+    function EmailAppend() {
+
+
+        if ( $("#txtEmail").val()!==null && $("#txtEmail").val()!=="") {
+            var emailAppend = "<tr><td>" + $("#txtEmail").val() + "</td></tr>";
+            $("#emailSalvar").last().append(emailAppend);
+            $("#txtEmail").val("");
+        }
+        else {
+            alert("Campo Email em branco");
+        }
+       
+              }
+
+
+
+    function TelefoneAppend() {
+        if ( $("#txtTelefone").val()!==null && $("#txtTelefone").val()!=="") {
+        var telefoneAppend = "<tr><td>" + $("#txtTelefone").val() + "</td></tr>";
+        $("#telefoneSalvar").last().append(telefoneAppend);
+        $("#txtTelefone").val("");
+        }
+        else {
+            alert("Campo Telefone em branco");
+        }
+       
+
+    }
+
+
+
+
+    function PersistirDados() {
+
+
+        var nome = $("#txtNome").val();
+
+        var sobrenome = $("#txtSobrenome").val();
+
+        var listEmailCriacaoViewModel = new Array();
+        var table = document.getElementById('emailSalvar');
+        for (var r = 0, n = table.rows.length; r < n; r++) {
+            for (var c = 0, m = table.rows[r].cells.length; c < m; c++) {
+                var email = table.rows[r].cells[c].innerHTML;
+
+                listEmailCriacaoViewModel.push(email);
+
+            }
+        }
+
+        var listTelefoneCriacaoModel = new Array();
+         var table = document.getElementById('telefoneSalvar');
+         for (var r = 0, n = table.rows.length; r < n; r++) {
+            for (var c = 0, m = table.rows[r].cells.length; c < m; c++) {
+                var telefone = table.rows[r].cells[c].innerHTML;
+
+                listTelefoneCriacaoModel.push(telefone);
+            }
+        }
+
+
+
+        if (
+            (nome !== null && nome !== "") &&
+            (sobrenome !== null && sobrenome !== "") &&
+            (listEmailCriacaoViewModel.length > 0) &&
+            (listTelefoneCriacaoModel.length>0))
+
+
+        {
+        
+        $.ajax({
+
+            async:false,
+            type: 'POST',
+            dataType: 'JSON',
+            cache: false,
+            contentType: 'application/json; charset=utf=8',
+            url: '@Url.Action("Create","Contato")',
+            data: JSON.stringify({ nome, sobrenome, listEmailCriacaoViewModel, listTelefoneCriacaoModel }),
+            sucess: function (data) {
+                 var myResult = $.parseJSON(data);
+                alert(myResult.status); 
+                alert("Cadastro Realizado");
+                window.location.replace("/Contato/Index");
+            },
+            error: function (response) {
+                                   
+                window.location.replace("/Contato/Index");
+                 
+            }
+
+
+        });
+
+
+        }
+        else {
+            alert("Alguns campos não foram preenchidos. Preencha-os, antes de continuar");
+        }
+
+        
+
+
+
+
+    }
+
+</script>
+
+
+<h2>Novo Contato</h2>
+
+
+
+<div class="form-horizontal">
+
+    <hr />
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Nome</label>
+        <div class="col-md-10">
+            <input id="txtNome" placeholder="Nome" type="text" class="form-control" required="required" min="1" maxlength="15" />
+        </div>
+    </div>
+
+
+
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Sobrenome</label>
+        <div class="col-md-10">
+            <input id="txtSobrenome" placeholder="Sobrenome" type="text" class="form-control" required="required" maxlength="35" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Email</label>
+        <div class="col-md-10">      
+            <div>
+
+                <input id="txtEmail"  placeholder="Email" type="email" class="form-control" required="required" />
+                <input id="btnEmail"  type="button" class="btn btn-info" value="+" />
+            </div>
+            <table class="tab-content table-condensed" id="emailSalvar">
+                <tr>
+                </tr>
+            </table>
+        </div>
+
+
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Telefone</label>
+        <div class="col-md-10">
+            <input id="txtTelefone" placeholder="Telefone" type="number" class="form-control" required="required" />
+            <input id="btnTelefone" type="button" class="btn btn-info" value="+" />
+
+            <table class="tab-content table-condensed" id="telefoneSalvar">
+                <tr>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+
+    <br />
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input id="CadastrarDados" type="submit" value="Cadastrar" class="btn btn-primary" />
+        </div>
+    </div>
+</div>
+
+
+<p>
+    @Html.ActionLink("Voltar", "Index")
+</p>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
