@@ -22,6 +22,9 @@ namespace Agenda_I4pro.Infrasctructure
 
         List<ContatoViewModel> listarContato();
 
+        void editarContato(int id, TB_CONTATOVIEWMODEL tB_CONTATOVIEWMODEL, ICollection<TB_TELEFONEVIEWMODEL> tB_TELEFONEVIEWMODELs, ICollection<TB_EMAILVIEWMODEL> tB_EMAILVIEWMODELs);
+
+        ContatoEditarViewModel exibirContatoViewModel(int ID_CONTO);
         void excluirContato(int ID_CONTO);
     }
 }

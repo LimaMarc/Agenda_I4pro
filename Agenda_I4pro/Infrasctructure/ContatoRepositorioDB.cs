@@ -17,16 +17,19 @@ namespace Agenda_I4pro.Infrasctructure
 
         //String de Conexão
         //Mudar no WebConfig
-        private string _connectionstring = ConfigurationManager.ConnectionStrings["DataBase"].ConnectionString;
+        private readonly string _connectionstring = ConfigurationManager.ConnectionStrings["DataBase"].ConnectionString;
+        SqlConnection conexaoDataBase;
 
 
-      
+
+
         public void cadastrarContato(TB_CONTATO contato, List<string> listaEmail, List<string> listaTelefone)
         {
             int identificador;
             try
             {
-                using (SqlConnection conexaoDataBase = new SqlConnection(_connectionstring))
+                conexaoDataBase = new SqlConnection(_connectionstring);
+                using (conexaoDataBase)
                 {
                     conexaoDataBase.Open();
 
@@ -87,7 +90,7 @@ namespace Agenda_I4pro.Infrasctructure
                 }
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
                 throw;
@@ -106,7 +109,8 @@ namespace Agenda_I4pro.Infrasctructure
 
             try
             {
-                using (SqlConnection conexaoDataBase = new SqlConnection(_connectionstring))
+                conexaoDataBase = new SqlConnection(_connectionstring);
+                using (conexaoDataBase)
                 {
                     conexaoDataBase.Open();
 
@@ -168,11 +172,12 @@ namespace Agenda_I4pro.Infrasctructure
 
             List<ContatoViewModel> lista = new List<ContatoViewModel>();
 
-            //Jogar Interface - SOLID
+
             ContatoViewModel contatoEmail;
             try
             {
-                using (SqlConnection conexaoDataBase = new SqlConnection(_connectionstring))
+                conexaoDataBase = new SqlConnection(_connectionstring);
+                using (conexaoDataBase)
                 {
                     conexaoDataBase.Open();
 
@@ -208,7 +213,8 @@ namespace Agenda_I4pro.Infrasctructure
         {
             try
             {
-                using (SqlConnection conexaoDataBase = new SqlConnection(_connectionstring))
+                conexaoDataBase = new SqlConnection(_connectionstring);
+                using (conexaoDataBase)
                 {
                     conexaoDataBase.Open();
 
@@ -226,13 +232,154 @@ namespace Agenda_I4pro.Infrasctructure
                 }
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
 
         }
 
+        public void editarContato(int id, TB_CONTATOVIEWMODEL tB_CONTATOVIEWMODEL, ICollection<TB_TELEFONEVIEWMODEL> tB_TELEFONEVIEWMODELs, ICollection<TB_EMAILVIEWMODEL> tB_EMAILVIEWMODELs)
+        {
+            try
+            {
+                conexaoDataBase = new SqlConnection(_connectionstring);
+                using (conexaoDataBase)
+                {
+                    conexaoDataBase.Open();
 
+
+                    using (SqlCommand cmd = new SqlCommand(DbCommand.SP_EDITAR_CONTATO, conexaoDataBase))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@idConto", id);
+                        cmd.Parameters.AddWithValue("@conto_nome", tB_CONTATOVIEWMODEL.CD_CONTO_NOME);
+                        cmd.Parameters.AddWithValue("@contoSobrenome", tB_CONTATOVIEWMODEL.CD_CONTO_SOBRENOME);
+                        var i = cmd.ExecuteNonQuery();
+
+
+                    }
+                    foreach (var item in tB_TELEFONEVIEWMODELs)
+                    {
+                        using (SqlCommand cmd = new SqlCommand(DbCommand.SP_EDITAR_CONTATO_TELEFONE, conexaoDataBase))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+
+                            cmd.Parameters.AddWithValue("@idConto", id);
+                            cmd.Parameters.AddWithValue("@idTelefone", item.ID_TEL);                            
+                            cmd.Parameters.AddWithValue("@cd_telefone", item.CD_TEL);
+                            var i = cmd.ExecuteNonQuery();
+                            cmd.Dispose();
+                        }
+
+
+                    }
+                    foreach (var item in tB_EMAILVIEWMODELs)
+                    {
+                        using (SqlCommand cmd = new SqlCommand(DbCommand.SP_EDITAR_CONTATO_EMAIL, conexaoDataBase))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+
+                            cmd.Parameters.AddWithValue("@idConto", id);
+                            cmd.Parameters.AddWithValue("@idEmail", item.ID_EMAIL);
+                            cmd.Parameters.AddWithValue("@cd_email", item.CD_EMAIL);
+                            var i = cmd.ExecuteNonQuery();
+                            cmd.Dispose();
+                        }
+
+
+
+                    }
+
+                }
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ContatoEditarViewModel exibirContatoViewModel(int ID_CONTO)
+        {
+            ContatoEditarViewModel contatoEditarViewModel = new ContatoEditarViewModel();
+            List<TB_TELEFONEVIEWMODEL> listaTelefone = new List<TB_TELEFONEVIEWMODEL>();
+            List<TB_EMAILVIEWMODEL> listaEmail = new List<TB_EMAILVIEWMODEL>();
+            TB_CONTATOVIEWMODEL contato = new TB_CONTATOVIEWMODEL();
+
+            TB_TELEFONEVIEWMODEL tbTelefoneViewModel;
+            TB_EMAILVIEWMODEL tbEmailViewModel;
+            try
+            {
+                conexaoDataBase = new SqlConnection(_connectionstring);
+                using (conexaoDataBase)
+                {
+                    conexaoDataBase.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(DbCommand.SP_EXIBIR_CONTATO, conexaoDataBase))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@id_conto", ID_CONTO);
+                        SqlDataReader exc = cmd.ExecuteReader();
+
+                        while (exc.Read())
+                        {
+
+                            contato.ID_CONTO = Convert.ToInt32(exc.GetValue(0).ToString());
+                            contato.CD_CONTO_NOME = exc.GetValue(1).ToString();
+                            contato.CD_CONTO_SOBRENOME = exc.GetValue(2).ToString();
+
+                        }
+
+                        exc.Close();
+                    }
+                    using (SqlCommand cmd = new SqlCommand(DbCommand.SP_LISTAR_CONTATO_TELEFONE, conexaoDataBase))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@id_conto", ID_CONTO);
+                        SqlDataReader exc = cmd.ExecuteReader();
+
+                        while (exc.Read())
+                        {
+                            tbTelefoneViewModel = new TB_TELEFONEVIEWMODEL();
+                            tbTelefoneViewModel.CD_TEL = exc.GetValue(3).ToString();
+                            tbTelefoneViewModel.ID_TEL = Convert.ToInt32(exc.GetValue(4).ToString());
+                            listaTelefone.Add(tbTelefoneViewModel);
+                        }
+
+                        contato.TB_TELEFONEVIEWMODEL = listaTelefone;
+
+                        exc.Close();
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand(DbCommand.SP_LISTAR_CONTATO_EMAIL, conexaoDataBase))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@id_conto", ID_CONTO);
+                        SqlDataReader exc = cmd.ExecuteReader();
+
+                        while (exc.Read())
+                        {
+                            tbEmailViewModel = new TB_EMAILVIEWMODEL();
+                            tbEmailViewModel.CD_EMAIL = exc.GetValue(2).ToString();
+                            tbEmailViewModel.ID_EMAIL = Convert.ToInt32(exc.GetValue(3).ToString());                         listaEmail.Add(tbEmailViewModel);
+                        }
+
+                        contato.TB_EMAILVIEWMODEL = listaEmail;
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            contatoEditarViewModel.TB_TELEFONEVIEWMODEL = listaTelefone;
+            contatoEditarViewModel.TB_EMAILVIEWMODEL = listaEmail;
+            contatoEditarViewModel.TB_CONTATOVIEWMODEL = contato;
+
+            return contatoEditarViewModel;
+        }
     }
 }

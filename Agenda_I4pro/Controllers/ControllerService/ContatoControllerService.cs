@@ -35,13 +35,22 @@ namespace Agenda_I4pro.Controllers.ControllerService
             return contatoViewModel;
         }
 
+        public void editarContato(int id, TB_CONTATOVIEWMODEL tB_CONTATOVIEWMODEL, ICollection<TB_TELEFONEVIEWMODEL> tB_TELEFONEVIEWMODELs, ICollection<TB_EMAILVIEWMODEL> tB_EMAILVIEWMODELs)
+        {
+            dbService.editarContato(id, tB_CONTATOVIEWMODEL, tB_TELEFONEVIEWMODELs, tB_EMAILVIEWMODELs);
+        }
+
         public void excluirContato(int ID_CONTO)
         {
             dbService.excluirContato(ID_CONTO);
             
         }
 
-
+        public ContatoEditarViewModel exibirContatoViewModel(int ID_CONTO)
+        {
+            ContatoEditarViewModel contatoEditarViewModel = dbService.exibirContatoViewModel(ID_CONTO);
+            return contatoEditarViewModel;
+        }
 
         public List<ContatoViewModel> listarContato()
         {

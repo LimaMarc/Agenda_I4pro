@@ -97,25 +97,31 @@ namespace Agenda_I4pro.Controllers
 
         public ActionResult Edit(int id)
         {
-            List<ContatoDetalheViewModel> contatoViewModel = contatoService.Detalhe(id);
-            return View();
+            ContatoEditarViewModel contatoViewModel = contatoService.exibirContatoViewModel(id);
+            return View(contatoViewModel);
         }
 
 
 
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, TB_CONTATOVIEWMODEL tB_CONTATOVIEWMODEL,ICollection<TB_TELEFONEVIEWMODEL> tB_TELEFONEVIEWMODELs, ICollection<TB_EMAILVIEWMODEL> tB_EMAILVIEWMODELs)
         {
-            try
-            {
+            
+               if (ModelState.IsValid)
+                { 
+                    
+                contatoService.editarContato(id, tB_CONTATOVIEWMODEL, tB_TELEFONEVIEWMODELs, tB_EMAILVIEWMODELs);
 
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+                  return RedirectToAction("Index");
+                }
+            ContatoEditarViewModel contatoViewModel = new ContatoEditarViewModel();
+            contatoViewModel.TB_CONTATOVIEWMODEL = tB_CONTATOVIEWMODEL;
+            contatoViewModel.TB_TELEFONEVIEWMODEL = tB_TELEFONEVIEWMODELs;
+            contatoViewModel.TB_EMAILVIEWMODEL = tB_EMAILVIEWMODELs;
+
+            return View(contatoViewModel);
+            
         }
 
 

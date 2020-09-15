@@ -9,7 +9,20 @@
 <p>
     @Html.ActionLink("Novo Contato", "Create")
 </p>
-<table class="table">
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+
+<script>
+   $(document).ready(function () {
+  $("#buscaInput").on("keyup", function() {
+    var nome = $(this).val().toLowerCase();
+    $("#tabelaListaContato tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(nome) > -1)
+    });
+  });
+});</script>
+
+<input class="form-control" id="buscaInput" type="text" placeholder="Buscar contato...">
+<table class="table" id="tabelaListaContato">
     <tr>
         <th>
             Identificador
@@ -23,23 +36,25 @@
         <th> Ações </th>
     </tr>
 
-@foreach (var item in Model) {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.ID)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.NomeContato)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.SobreNome)
-    </td>
-    <td>
-        @Html.ActionLink("Editar Contato", "Create", new { id = item.ID }) |
-        @Html.ActionLink("Detalhe do Contato", "Details", new { id = item.ID }) |
-        @Html.ActionLink("Excluir Contato", "Delete", new { id = item.ID })
-    </td>
-</tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NomeContato)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SobreNome)
+            </td>
+            <td>
+    
+                @Html.ActionLink("Editar Contato", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Detalhe do Contato", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Excluir Contato", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
 
 </table>

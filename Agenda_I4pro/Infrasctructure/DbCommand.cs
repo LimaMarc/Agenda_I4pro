@@ -29,7 +29,10 @@ namespace Agenda_I4pro.Infrasctructure
         public static readonly string SP_LISTAR_CONTATO = "SP_LISTAR_CONTATO";
         public static readonly string SP_LISTAR_CONTATO_EMAIL = "SP_LISTAR_CONTATO_EMAIL";
         public static readonly string SP_LISTAR_CONTATO_TELEFONE = "SP_LISTAR_CONTATO_TELEFONE";
-
+        public static readonly string SP_EDITAR_CONTATO = "SP_EDITAR_CONTATO";
+        public static readonly string SP_EDITAR_CONTATO_EMAIL = "SP_EDITAR_CONTATO_EMAIL";
+        public static readonly string SP_EDITAR_CONTATO_TELEFONE = "SP_EDITAR_CONTATO_TELEFONE";
+        public static readonly string SP_EXIBIR_CONTATO = "SP_EXIBIR_CONTATO";
 
     }
 }
